@@ -13,6 +13,7 @@ namespace Extract.Core
         public string[] Index { get; private set; }
         public char[][] Data { get; private set; }
         public List<DataRecord> Records { get; set; }
+        public List<DataRecord> Buffer { get; set; }
 
         public DataRepository(string Root) {
             this.Root = Root;
@@ -44,16 +45,45 @@ namespace Extract.Core
                 foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc)) {
                     PrintData(dr);
                 }
+            }
+        }
 
+        public void PrintRecords(char startc, char endc, int len) {
+            Console.Write("PrintRecords?(y) :");
+            if (Console.ReadLine() == "y") {
+                foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc && r.Length == len)) {
+                    PrintData(dr);
+                }
             }
         }
 
         public void PrintData(DataRecord datarecord) {
             Console.WriteLine($"{datarecord.FileIndex} {datarecord.StartIndex} {datarecord.Length} {datarecord.StartChar} {datarecord.EndChar}");
+            Console.WriteLine($"filename: {Index[datarecord.FileIndex]}");
             for (int i = 0; i < datarecord.Length; i++) {
                 Console.Write(this.Data[datarecord.FileIndex][datarecord.StartIndex + i]);
             }
             Console.WriteLine();
+        }
+
+        public void ToBuffer(char startc, char endc, int len, int findex = -1) {
+            Buffer = new();
+
+            if (findex != -1) {
+                foreach(DataRecord dr in Records.Where(r => r.FileIndex == findex && r.StartChar == startc && r.EndChar == endc && r.Length == len)) {
+                    Buffer.Add(dr);
+                }
+            } else {
+                foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc && r.Length == len)) {
+                    Buffer.Add(dr);
+                }
+            }
+        }
+
+        public void PrintBuffer() {
+            foreach (DataRecord dr in Buffer) {
+                PrintData(dr);
+            }
         }
 
         private static List<DataRecord> CreateRecordIndex(char[][] data, string[] fileindex) {
