@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
@@ -9,6 +10,8 @@ namespace Extract.Core
 {
     public class DataRepository
     {
+        private Stopwatch sw = new();
+
         public string Root { get; private set; }
         public string[] Index { get; private set; }
         public char[][] Data { get; private set; }
@@ -40,30 +43,30 @@ namespace Extract.Core
         }
 
         public void PrintRecords(char startc, char endc) {
-            Console.Write("PrintRecords?(y) :");
-            if (Console.ReadLine() == "y") {
-                foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc)) {
-                    PrintData(dr);
-                }
+            foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc)) {
+                PrintData(dr);
             }
         }
 
         public void PrintRecords(char startc, char endc, int len) {
-            Console.Write("PrintRecords?(y) :");
-            if (Console.ReadLine() == "y") {
-                foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc && r.Length == len)) {
-                    PrintData(dr);
-                }
+            foreach(DataRecord dr in Records.Where(r => r.StartChar == startc && r.EndChar == endc && r.Length == len)) {
+                PrintData(dr);
+            }
+        }
+
+        public void PrintAllRecords() {
+            foreach(DataRecord dr in Records) {
+                PrintData(dr);
             }
         }
 
         public void PrintData(DataRecord datarecord) {
-            Console.WriteLine($"{datarecord.FileIndex} {datarecord.StartIndex} {datarecord.Length} {datarecord.StartChar} {datarecord.EndChar}");
-            Console.WriteLine($"filename: {Index[datarecord.FileIndex]}");
+            Console.Write($"filename: {Index[datarecord.FileIndex]}\n[");
             for (int i = 0; i < datarecord.Length; i++) {
                 Console.Write(this.Data[datarecord.FileIndex][datarecord.StartIndex + i]);
             }
-            Console.WriteLine();
+
+            Console.WriteLine($"]\n{datarecord.FileIndex} {datarecord.StartIndex} {datarecord.Length} {datarecord.StartChar} {datarecord.EndChar}");
         }
 
         public void ToBuffer(char startc, char endc, int len, int findex = -1) {
@@ -98,20 +101,15 @@ namespace Extract.Core
                         s = ls;
                         ls = le + 1;
 
-                        if (s != le) {
+                        if (s != le && le - s > 1) {
                             results.Add(new DataRecord{ FileIndex = i, StartIndex = s, Length = le - s, StartChar = data[i][s], EndChar = data[i][s + le - s - 1] });
                         }
                     }
                 }
 
-                int laststart = 0;
-
                 for (;s < len; s++) {
                     if (data[i][s] == ' ')
-                        laststart = s;
-                    if (s == le - 1) {
-                        results.Add(new DataRecord{ FileIndex = i, StartIndex = s, Length = len - laststart - 1, StartChar = data[i][len - laststart - 1], EndChar = data[i][len - 1]});
-                    }
+                        results.Add(new DataRecord{ FileIndex = i, StartIndex = s + 1, Length = len - 1 - s, StartChar = data[i][len - s], EndChar = data[i][len - 1]});
                 }
             }
 

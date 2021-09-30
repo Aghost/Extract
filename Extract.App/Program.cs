@@ -49,12 +49,15 @@ namespace Extract.App
                             WriteLine("argument error");
                         }
                         break;
+                    case "printall":
+                        drr.PrintAllRecords();
+                        break;
                     case "?buffer":
                         drr.PrintBuffer();
                         break;
                     case "help":
                     default:
-                        WriteLine("search | tobuffer | ?buffer | help | exit");
+                        WriteLine("search | tobuffer | printall | ?buffer | help | exit");
                         break;
                 }
             }
