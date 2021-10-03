@@ -9,10 +9,10 @@ namespace Extract.App
     {
         static void Main(string[] args)
         {
-            //DataRepository drr = new("../../../0_LIBRARY/0_UNSORTED");
-            DataRepository drr = new("../../../0_LIBRARY");
+            DataRepository drr = new("../../../0_LIBRARY/0_UNSORTED");
+            //DataRepository drr = new("../../../0_LIBRARY");
 
-            foreach (string str in drr.Index) { WriteLine($"{str}"); }
+            WriteLine("(type 'help' to list cmds)");
 
             string userinput = "";
             while(userinput != "exit") {
@@ -33,6 +33,7 @@ namespace Extract.App
                         } else {
                             drr.PrintRecords(startch, endch);
                         }
+
                         break;
                     case "tobuffer":
                         Write($"startchar: ");
@@ -49,18 +50,27 @@ namespace Extract.App
                             WriteLine("argument error");
                         }
                         break;
-                    case "printall":
-                        drr.PrintAllRecords();
+                    case "?records":
+                        if (AskQ($"Are you sure? (records: {drr.Records.Count})")) { drr.PrintAllRecords(); }
                         break;
                     case "?buffer":
-                        drr.PrintBuffer();
+                        if (AskQ($"Are you sure? ")) { drr.PrintBuffer(); }
+                        break;
+                    case "index":
+                        if (AskQ($"Are you sure? (files: {drr.Index.Length})")) { foreach (string str in drr.Index) { WriteLine($"{str}"); } }
                         break;
                     case "help":
+                        WriteLine("search | tobuffer | ?records | ?buffer | index | help | exit");
+                        break;
                     default:
-                        WriteLine("search | tobuffer | printall | ?buffer | help | exit");
                         break;
                 }
             }
+        }
+
+        static bool AskQ(string question) {
+            WriteLine($"{question}(y/n)");
+            return ReadLine() == "y";
         }
     }
 }

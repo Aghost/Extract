@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Collections.Generic;
 using System.IO;
@@ -10,8 +9,6 @@ namespace Extract.Core
 {
     public class DataRepository
     {
-        private Stopwatch sw = new();
-
         public string Root { get; private set; }
         public string[] Index { get; private set; }
         public char[][] Data { get; private set; }
