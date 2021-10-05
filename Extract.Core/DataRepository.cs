@@ -99,14 +99,27 @@ namespace Extract.Core
                         ls = le + 1;
 
                         if (s != le && le - s > 1) {
-                            results.Add(new DataRecord{ FileIndex = i, StartIndex = s, Length = le - s, StartChar = data[i][s], EndChar = data[i][s + le - s - 1] });
+                            results.Add(new DataRecord {
+                                FileIndex = i,
+                                StartIndex = s,
+                                Length = le - s,
+                                StartChar = data[i][s],
+                                EndChar = data[i][s + le - s - 1]
+                            });
                         }
                     }
                 }
 
                 for (;s < len; s++) {
-                    if (data[i][s] == ' ')
-                        results.Add(new DataRecord{ FileIndex = i, StartIndex = s + 1, Length = len - 1 - s, StartChar = data[i][len - s], EndChar = data[i][len - 1]});
+                    if (data[i][s] == ' ') {
+                        results.Add(new DataRecord {
+                            FileIndex = i,
+                            StartIndex = s + 1,
+                            Length = len - s - 1,
+                            StartChar = data[i][len - s],
+                            EndChar = data[i][len - 1]
+                        });
+                    }
                 }
             }
 
